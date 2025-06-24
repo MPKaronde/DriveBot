@@ -3,17 +3,15 @@
 
 #define HALFSTEP 4
 
-const int FRONT_BUMP_SWITCH = 8; // pin for foward bump switches
-const int BAUD_RATE = 9600;      // serial baud rate
+const int FRONT_BUMP_SWITCH = 13; // pin for foward bump switches
+const int BAUD_RATE = 9600;       // serial baud rate
+const int MOTOR_ACCEL = 1000;     // motor acceleraton rate
+const int MAX_SPEED = 1000;       // (absolute value) max motor speed allowed
+const int MIN_SPEED = 400;        // (absolute value) min motor speed allowed
+const int TICKS_PER_CM = 35;      // Number of motor ticks per cm traveled in straight line NOTE: Actual calculated value = 35.0877193
 
-// TODO: Determine exact values
-const int MOTOR_ACCEL = 1000000; // motor acceleraton rate
-const int MAX_SPEED = 1200;      // (absolute value) max motor speed allowed
-const int MIN_SPEED = 800;       // (absolute value) min motor speed allowed
-const int TICKS_PER_CM = 50;     // Number of motor ticks per cm traveled in straight line
-
-AccelStepper Left(HALFSTEP, 0, 1, 2, 3);
-AccelStepper Right(HALFSTEP, 4, 5, 6, 7);
+AccelStepper Right(HALFSTEP, 7, 6, 5, 4);
+AccelStepper Left(HALFSTEP, 8, 9, 10, 11);
 
 void setup()
 {
@@ -26,8 +24,10 @@ void setup()
     // Motor Setup
     Left.setAcceleration(MOTOR_ACCEL);
     Left.setMaxSpeed(MAX_SPEED);
+    Left.setSpeed(MAX_SPEED);
     Right.setAcceleration(MOTOR_ACCEL);
-    Right.setAcceleration(MAX_SPEED);
+    Right.setMaxSpeed(MAX_SPEED);
+    Right.setSpeed(MAX_SPEED);
 }
 
 // Input: percentage of range between min & max speed
@@ -45,4 +45,19 @@ int get_speed_percentage(double percent)
 
 void loop()
 {
+    int distance = 1000;
+
+    while (1 == 1)
+    {
+        Left.moveTo(distance);
+        Right.moveTo(distance);
+
+        while (Left.distanceToGo() != 0)
+        {
+            Left.run();
+            Right.run();
+        }
+
+        distance = -distance;
+    }
 }
