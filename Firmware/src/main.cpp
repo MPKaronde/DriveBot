@@ -8,7 +8,7 @@ const int BAUD_RATE = 9600;       // serial baud rate
 const int MOTOR_ACCEL = 1000;     // motor acceleraton rate
 const int MAX_SPEED = 1000;       // (absolute value) max motor speed allowed
 const int MIN_SPEED = 400;        // (absolute value) min motor speed allowed
-const int TICKS_PER_CM = 35;      // Number of motor ticks per cm traveled in straight line NOTE: Actual calculated value = 35.0877193
+const double TICKS_PER_CM = 12;   // Number of motor ticks per cm traveled in straight line NOTE: Actual calculated value = 11.16876794
 const int TRACK_WIDTH = 148;      // mm distance between ground contact of the drive wheels
 const int WHEEL_DIAMATER = 57;    // mm diameter of the wheels
 
@@ -34,7 +34,7 @@ void setup()
 
 // Input: percentage of range between min & max speed
 // Returns: appropriate ticks per second for motors to attain given percent
-int get_speed_percentage(double percent)
+int get_speed_from_percentage(double percent)
 {
     /*
     FORMULA:
@@ -49,7 +49,7 @@ int get_speed_percentage(double percent)
 // Output: number motor ticks required
 int get_steps_from_cm(double cm)
 {
-    return (int)(cm * (double)TICKS_PER_CM);
+    return (int)(cm * TICKS_PER_CM);
 }
 
 // Input: Speed (motor speed) & Distance (ticks) desired to drive in straight line
@@ -100,9 +100,9 @@ bool rotate_in_place(int degrees, int speed)
     Wheel Rotations = (TrackWidth * Degrees) / (360 * Wheel Diameter)
     Ticks per rotation = 200
     Therefore,
-    Ticks = (TrackWidth * Degrees) / (360 * 200 * Wheel Diameter)
+    Ticks = (TrackWidth * Degrees * 200) / (360 * Wheel Diameter)
     */
-    int ticks = (TRACK_WIDTH * degrees) / (72000 * WHEEL_DIAMATER);
+    int ticks = (TRACK_WIDTH * degrees * 200) / (360 * WHEEL_DIAMATER);
 
     // Determine if going left or right
     // TODO: determine if this is accurate
@@ -117,6 +117,7 @@ bool rotate_in_place(int degrees, int speed)
         Right.moveTo(ticks);
     }
 
+    // run the motors
     while (Left.distanceToGo() != 0 || Right.distanceToGo() != 0)
     {
         Left.run();
@@ -126,21 +127,27 @@ bool rotate_in_place(int degrees, int speed)
     return true;
 }
 
+// Input: how far to go in cm on each straight and what % between min and max speed to go
+// Behavior: robot drives in a square with given length and speed
+// Return: none
+void test_drive_loop(int distance_cm, double speed_percentage)
+{
+    int speed = get_speed_from_percentage(speed_percentage);
+    drive_straight(speed, distance_cm);
+    rotate_in_place(90, speed / 2);
+    drive_straight(speed, distance_cm);
+    rotate_in_place(90, speed / 2);
+    drive_straight(speed, distance_cm);
+    rotate_in_place(90, speed / 2);
+    drive_straight(speed, distance_cm);
+}
+
 void loop()
 {
-    int distance = 1000;
-
-    while (1 == 1)
+    bool go = true;
+    if (go)
     {
-        Left.moveTo(distance);
-        Right.moveTo(distance);
-
-        while (Left.distanceToGo() != 0)
-        {
-            Left.run();
-            Right.run();
-        }
-
-        distance = -distance;
+        rotate_in_place(90, MIN_SPEED);
+        go = false;
     }
 }
