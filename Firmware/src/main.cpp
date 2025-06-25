@@ -102,7 +102,7 @@ bool rotate_in_place(int degrees, int speed)
     Therefore,
     Ticks = (TrackWidth * Degrees * 200) / (360 * Wheel Diameter)
     */
-    int ticks = (TRACK_WIDTH * degrees * 200) / (360 * WHEEL_DIAMATER);
+    int ticks = (((double)TRACK_WIDTH * (double)degrees * 200.0)) / ((double)(360.0 * (double)WHEEL_DIAMATER));
 
     // Determine if going left or right
     // TODO: determine if this is accurate
@@ -147,6 +147,7 @@ void loop()
     bool go = true;
     if (go)
     {
+        // drive_straight(MIN_SPEED, 100);
         rotate_in_place(90, MIN_SPEED);
         go = false;
     }
