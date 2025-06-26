@@ -7,6 +7,11 @@ NOTE: most of the methods attempt to move by a fixed number of mm and/or degrees
       variations such as voltage level, wheel compression, otherwise unknown drag, etc, can cause the system to drift from these
       measurements so other onboard sensors (distance sensors, camera) should be used with this & these distance should absolutely
       NOT be applied through Dead Reckoning
+
+Method comment format:
+      Input: method inputs and specifications
+      Behavior: robot's physical behavior when method is run
+      Returns: what the method returns and specifications
 */
 
 #include <Arduino.h>
@@ -46,6 +51,7 @@ void setup()
 }
 
 // Input: percentage of range between min & max speed
+// Behavior: none
 // Returns: appropriate ticks per second for motors to attain given percent
 int get_speed_from_percentage(double percent)
 {
@@ -59,6 +65,7 @@ int get_speed_from_percentage(double percent)
 }
 
 // Input: number cm desired to traverse (double w/ precison up to 4 decimals)
+// Behavior: none
 // Output: number motor ticks required
 int get_steps_from_cm(double cm)
 {
