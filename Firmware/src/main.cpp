@@ -1,3 +1,14 @@
+/*
+Main firmware code for the SLAMBot to be run on Arduino Uno.
+Commands to be sent and interacted with over serial w/ the rest of the system
+
+NOTE: most of the methods attempt to move by a fixed number of mm and/or degrees. Although the speed can be trusted,
+      the distance measurements are merely an ESTIMATE and NOT TO BE FULLY TRUSTED. Although the bot is run via steppers,
+      variations such as voltage level, wheel compression, otherwise unknown drag, etc, can cause the system to drift from these
+      measurements so other onboard sensors (distance sensors, camera) should be used with this & these distance should absolutely
+      NOT be applied through Dead Reckoning
+*/
+
 #include <Arduino.h>
 #include <AccelStepper.h>
 
