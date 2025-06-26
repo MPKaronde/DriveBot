@@ -197,6 +197,29 @@ bool run_serial(String serial_command)
 }
 
 // Input: none
+// Behavior: move away from source of bumps if needed
+// Return: none
+void respond_to_bumps()
+{
+    // if front bumped, back off
+    if (digitalRead(FRONT_BUMP_SWITCH) == LOW)
+    {
+        drive_straight(MIN_SPEED, -100);
+    }
+
+    // whenever rear is bumped, go foward and away
+    // TODO: apply when rear switch added
+}
+
+// Input: none
+// Behavior: none
+// Return: true if any switch has been bumped
+bool check_bumps()
+{
+    return digitalRead(FRONT_BUMP_SWITCH) == LOW;
+}
+
+// Input: none
 // Behavior: continues interpreting and communicating over serial / running machine as long as SERIAL_RUNNING is true
 // Return: none
 void serial_runner()
@@ -204,17 +227,25 @@ void serial_runner()
     int numCommands = 0;
     while (SERIAL_RUNNING)
     {
-        // block while waiting for next command
-        while (Serial.available() == 0)
+        // block while waiting for next command or bump switch
+        while (Serial.available() == 0 || !check_bumps())
         {
         }
 
-        // command recieved
-        numCommands++;
-        String command = Serial.readString();
-        bool commandExecuted = run_serial(command);
-        String printBack = "command no :: " + (String)numCommands + "       execution state :: " + (String)commandExecuted;
-        Serial.println(printBack);
+        // if bumped, respond to bumps
+        if (check_bumps())
+        {
+            respond_to_bumps();
+        }
+        // otherwise command recieved
+        else
+        {
+            numCommands++;
+            String command = Serial.readString();
+            bool commandExecuted = run_serial(command);
+            String printBack = "command no :: " + (String)numCommands + "       execution state :: " + (String)commandExecuted;
+            Serial.println(printBack);
+        }
     }
     Serial.println("Session ended       # commands executed :: " + numCommands);
 }
