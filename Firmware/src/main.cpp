@@ -12,6 +12,8 @@ const double TICKS_PER_CM = 12;   // Number of motor ticks per cm traveled in st
 const int TRACK_WIDTH = 148;      // mm distance between ground contact of the drive wheels
 const int WHEEL_DIAMATER = 57;    // mm diameter of the wheels
 
+bool SERIAL_RUNNING = true; // whether to run serial loop. Setting to false will require arduino reset to set true.
+
 AccelStepper Right(HALFSTEP, 7, 6, 5, 4);
 AccelStepper Left(HALFSTEP, 8, 9, 10, 11);
 
@@ -175,17 +177,38 @@ bool run_serial(String serial_command)
         int degrees = main_command.substring(space2).toInt();
         return rotate_in_place(speed, degrees);
     }
+    else if (main_command == "end")
+    {
+        SERIAL_RUNNING = false;
+    }
     // unknown command
     return false;
 }
 
+// Input: none
+// Behavior: continues interpreting and communicating over serial / running machine as long as SERIAL_RUNNING is true
+// Return: none
+void serial_runner()
+{
+    int numCommands = 0;
+    while (SERIAL_RUNNING)
+    {
+        // block while waiting for next command
+        while (Serial.available() == 0)
+        {
+        }
+
+        // command recieved
+        numCommands++;
+        String command = Serial.readString();
+        bool commandExecuted = run_serial(command);
+        String printBack = "command no :: " + (String)numCommands + "       execution state :: " + (String)commandExecuted;
+        Serial.println(printBack);
+    }
+    Serial.println("Session ended       # commands executed :: " + numCommands);
+}
+
 void loop()
 {
-    bool go = true;
-    if (go)
-    {
-        // drive_straight(MIN_SPEED, 100);
-        rotate_in_place(90, MIN_SPEED);
-        go = false;
-    }
+    serial_runner();
 }
