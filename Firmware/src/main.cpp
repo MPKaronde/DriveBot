@@ -82,7 +82,7 @@ bool drive_straight(int speed, int distance)
 // Input: Degrees to rotate by Speed (motor speed) to rotate in
 // Behavior: Rotate in place by given amount at given speed (runs both motors opposite directions for required time at given speed)
 // Return: True if valid values, False if invalid values or error deteced
-bool rotate_in_place(int degrees, int speed)
+bool rotate_in_place(int speed, int degrees)
 {
     // speed out of range
     if (speed < MIN_SPEED || speed > MAX_SPEED)
@@ -127,19 +127,56 @@ bool rotate_in_place(int degrees, int speed)
     return true;
 }
 
-// Input: how far to go in cm on each straight and what % between min and max speed to go
-// Behavior: robot drives in a square with given length and speed
-// Return: none
-void test_drive_loop(int distance_cm, double speed_percentage)
+// Input: serial_command - a command read over serial in understandable format
+// Behavior: run appropriate command
+// Return: true if command success, false if command failure or command not recognized
+bool run_serial(String serial_command)
 {
-    int speed = get_speed_from_percentage(speed_percentage);
-    drive_straight(speed, distance_cm);
-    rotate_in_place(90, speed / 2);
-    drive_straight(speed, distance_cm);
-    rotate_in_place(90, speed / 2);
-    drive_straight(speed, distance_cm);
-    rotate_in_place(90, speed / 2);
-    drive_straight(speed, distance_cm);
+    // Parse main command name
+    int space1 = serial_command.indexOf(" ");
+    String main_command = serial_command;
+    if (space1 != -1)
+    {
+        main_command = serial_command.substring(0, space1);
+    }
+
+    // parse individual commands
+    if (main_command == "drive_straight")
+    {
+        // cant be drive_straight
+        if (space1 == -1)
+        {
+            return false;
+        }
+        int space2 = serial_command.indexOf(" ", space1);
+        // cant be drive_straight
+        if (space2 == -1)
+        {
+            return false;
+        }
+        int speed = serial_command.substring(space1, space2).toInt();
+        int distance = serial_command.substring(space2).toInt();
+        return drive_straight(speed, distance);
+    }
+    else if (main_command == "rotate_in_place")
+    {
+        // cant be rotate in place
+        if (space1 == -1)
+        {
+            return false;
+        }
+        int space2 = serial_command.indexOf(" ", space1);
+        // cant be rotate in place
+        if (space2 == -1)
+        {
+            return false;
+        }
+        int speed = main_command.substring(space1, space2).toInt();
+        int degrees = main_command.substring(space2).toInt();
+        return rotate_in_place(speed, degrees);
+    }
+    // unknown command
+    return false;
 }
 
 void loop()
