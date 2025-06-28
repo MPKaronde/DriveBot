@@ -147,6 +147,14 @@ bool rotate_in_place(int speed, int degrees)
     return true;
 }
 
+// Input: none
+// Behavior: none
+// Return: String in format "MIN_SPEED MAX_SPEED"
+String get_limits()
+{
+    return (String)MIN_SPEED + " " + (String)MAX_SPEED;
+}
+
 // Input: serial_command - a command read over serial in understandable format
 // Behavior: run appropriate command
 // Return: true if command success, false if command failure or command not recognized
@@ -194,6 +202,11 @@ bool run_serial(String serial_command)
         int speed = main_command.substring(space1, space2).toInt();
         int degrees = main_command.substring(space2).toInt();
         return rotate_in_place(speed, degrees);
+    }
+    // NOTE - Special case: accesses serial from outside serial_runner
+    else if (main_command == "limits")
+    {
+        Serial.println(get_limits());
     }
     else if (main_command == "end")
     {
