@@ -51,6 +51,7 @@ class SerialCommunicator:
 
     # rotate by given amount if speed is valid
     # NOTE: speed check is also done on arduino, but serial communication is time expensive so easier to do it here too
+    # positive degs = right, negative degs = left
     def rotate_in_place(self, speed, degrees):
         # check speed limits
         if speed < self.MIN_SPEED or speed > self.MAX_SPEED:
@@ -59,6 +60,14 @@ class SerialCommunicator:
         commandString = "rotate_in_place " + str(speed) + " " + str(degrees) + "\n"
         self.Ser.write(commandString)
         return self.check_execution()
+
+    # return min speed
+    def min_speed(self):
+        return self.MIN_SPEED
+
+    # return max speed
+    def max_speed(self):
+        return self.MAX_SPEED
 
     # ends the serial communication session
     # Arduino needs to restart in order to restart session after this executes

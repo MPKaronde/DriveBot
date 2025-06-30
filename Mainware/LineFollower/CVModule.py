@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 
 
-class LineFollowerCV:
+class CVModule:
 
     # setup camera, bounding box limits, line thickness
     def __init__(self):
