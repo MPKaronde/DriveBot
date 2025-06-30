@@ -12,15 +12,21 @@ class CVModule:
 
     # setup camera, bounding box limits, line thickness
     def __init__(self):
-        self.cap = cv2.VideoCapture(0)
-        # TODO: determine actual working bounding box limits
-        self.bound_x, self.bound_y, self.bound_w, self.bound_h = 200, 150, 300, 200
+        self.cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+        if not self.cap.isOpened():
+            print("Error: Could not open camera.")
+        else:
+            print("cam opened")
+        # working frame
+        self.frame_x, self.frame_y, self.frame_w, self.frame_h = 100, 250, 300, 150
+        # bounding box
+        self.bound_x, self.bound_y, self.bound_w, self.bound_h = 200, 250, 100, 150
         # TODO: determine actual thickness in webcam feed
         self.line_size = 100
 
     # find and return x position of bounding box around black line
     # return -1 if no box found
-    def detect_line_position(self, frame):
+    def detect_line_position(self, frame, draw_on_frame=None):
         # make black and white
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
@@ -37,7 +43,10 @@ class CVModule:
             if cv2.contourArea(contour) > self.line_size:
                 # get box bounding contour
                 x, y, w, h = cv2.boundingRect(contour)
-                return x
+
+                cv2.rectangle(draw_on_frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+
+                return (x + (x + w)) / 2
 
         # line not found
         return -1
@@ -61,7 +70,15 @@ class CVModule:
         )
 
         # find black line
-        linePos = self.detect_line_position(frame)
+        # linePos = self.detect_line_position(frame)
+
+        # Crop the frame to your desired ROI
+        cropped = frame[
+            self.frame_y : self.frame_y + self.frame_h,
+            self.frame_x : self.frame_x + self.frame_w,
+        ]
+        # Process only the cropped frame
+        linePos = self.detect_line_position(cropped)
 
         # check if line detected & compare to bounding box
         if linePos == -1:
@@ -96,43 +113,70 @@ class CVModule:
         )
 
         # find black line
-        linePos = self.detect_line_position(frame)
+        # linePos = self.detect_line_position(frame)
+
+        # Crop the frame to your desired ROI
+        cropped = frame[
+            self.frame_y : self.frame_y + self.frame_h,
+            self.frame_x : self.frame_x + self.frame_w,
+        ]
+
+        # Process only the cropped frame
+        linePos = self.detect_line_position(cropped, draw_on_frame=cropped)
 
         # check if line detected & compare to bounding box
         if linePos != -1:
             # line is left of box
-            if linePos < self.bound_x:
+            if linePos > self.bound_x:
                 cv2.putText(
-                    frame,
-                    "Line is LEFT of box",
+                    cropped,
+                    "Line is RIGHT of box :: " + str(linePos),
                     (10, 50),
                     cv2.FONT_HERSHEY_SIMPLEX,
-                    1,
+                    0.5,
                     (0, 0, 255),
                     2,
                 )
             # line is right of box
-            elif linePos > self.bound_x + self.bound_w:
+            elif linePos < self.bound_x - self.bound_w:
                 cv2.putText(
-                    frame,
-                    "Line is RIGHT of box",
+                    cropped,
+                    "Line is LEFT of box :: " + str(linePos),
                     (10, 50),
                     cv2.FONT_HERSHEY_SIMPLEX,
-                    1,
+                    0.5,
                     (0, 0, 255),
                     2,
                 )
             # line is within box
             else:
                 cv2.putText(
-                    frame,
-                    "Line is WITHIN box",
+                    cropped,
+                    "Line is WITHIN box :: " + str(linePos),
                     (10, 50),
                     cv2.FONT_HERSHEY_SIMPLEX,
-                    1,
+                    0.5,
                     (0, 255, 0),
                     2,
                 )
 
         # Show the frame with bounding box and result
-        cv2.imshow("Processed Image", frame)
+        cv2.imshow("Processed Image", cropped)
+        cv2.waitKey(1)
+
+
+cam = CVModule()
+while True:
+    cam.capture_and_process_tester()
+
+
+# for i in range(5):
+#     cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
+#     if cap.isOpened():
+#         print(f"Camera {i} is available.")
+#         ret, frame = cap.read()
+#         if ret:
+#             cv2.imshow(f"Camera {i}", frame)
+#             cv2.waitKey(1000)
+#         cap.release()
+# cv2.destroyAllWindows()
