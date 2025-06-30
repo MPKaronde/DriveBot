@@ -18,9 +18,9 @@ class CVModule:
         else:
             print("cam opened")
         # working frame
-        self.frame_x, self.frame_y, self.frame_w, self.frame_h = 100, 250, 300, 150
+        self.frame_x, self.frame_y, self.frame_w, self.frame_h = 100, 200, 300, 100
         # bounding box
-        self.bound_x, self.bound_y, self.bound_w, self.bound_h = 200, 250, 100, 150
+        self.bound_x, self.bound_y, self.bound_w, self.bound_h = 200, 200, 100, 100
         # TODO: determine actual thickness in webcam feed
         self.line_size = 100
 
