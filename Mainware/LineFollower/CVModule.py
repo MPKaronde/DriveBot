@@ -85,11 +85,11 @@ class CVModule:
             return "error"
         else:
             # line is left of box
-            if linePos < self.bound_x:
-                return "left"
-            # line is right of box
-            elif linePos > self.bound_x + self.bound_w:
+            if linePos > self.bound_x:
                 return "right"
+            # line is right of box
+            elif linePos > self.bound_x - self.bound_w:
+                return "left"
             # line is within box
             else:
                 return "center"
