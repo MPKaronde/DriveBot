@@ -26,12 +26,24 @@ class SerialCommunicator:
         limString = self.Ser.readline().decode().strip()
         self.MIN_SPEED, self.MAX_SPEED = map(int, limString.split())
 
+    # waits until execution confirmation recieved
+    def wait_for_machine(self):
+        curString = self.Ser.readline().decode()
+        while not "command no" in curString:
+            curString = self.Ser.readline().decode()
+
     # reads returned execution state string
     # returns true if machine confirmed execution, false otherwise
     def check_execution(self):
         if "true" in self.Ser.readline() or "True" in self.Ser.readline():
             return True
         return False
+
+    # to be run at the end of every command
+    # waits for arduino to be ready & confirms command completion
+    def end_execution(self):
+        self.wait_for_machine()
+        return self.check_execution()
 
     # returns string with speed limits
     # NOTE: self's MIN_SPEED and MAX_SPEED were set in __init__ so no point resetting them here (they dont change)
@@ -47,7 +59,7 @@ class SerialCommunicator:
 
         commandString = "drive_straight " + str(speed) + " " + str(distance) + "\n"
         self.Ser.write(commandString.encode())
-        return self.check_execution()
+        return self.end_execution()
 
     # rotate by given amount if speed is valid
     # NOTE: speed check is also done on arduino, but serial communication is time expensive so easier to do it here too
@@ -59,7 +71,7 @@ class SerialCommunicator:
 
         commandString = "rotate_in_place " + str(speed) + " " + str(degrees) + "\n"
         self.Ser.write(commandString.encode())
-        return self.check_execution()
+        return self.end_execution()
 
     # return min speed
     def min_speed(self):
