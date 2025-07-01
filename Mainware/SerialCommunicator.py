@@ -17,19 +17,19 @@ import time
 class SerialCommunicator:
 
     # Establish connection, determine currently accepted speed limits
-    def __init__(self, port_name="/dev/ttyACM0", baud_rate=9600):
+    def __init__(self, port_name="/dev/ttyUSB0", baud_rate=9600):
         self.Ser = serial.Serial(port_name, baud_rate, timeout=1)
         time.sleep(2)
 
         # get min and max limits
-        self.Ser.write("limits")
-        limString = self.Ser.readline()
+        self.Ser.write("limits\n".encode())
+        limString = self.Ser.readline().decode().strip()
         self.MIN_SPEED, self.MAX_SPEED = map(int, limString.split())
 
     # reads returned execution state string
     # returns true if machine confirmed execution, false otherwise
     def check_execution(self):
-        if "true" in self.Ser.readline or "True" in self.Ser.readline:
+        if "true" in self.Ser.readline() or "True" in self.Ser.readline():
             return True
         return False
 
@@ -46,7 +46,7 @@ class SerialCommunicator:
             return False
 
         commandString = "drive_straight " + str(speed) + " " + str(distance) + "\n"
-        self.Ser.write(commandString)
+        self.Ser.write(commandString.encode())
         return self.check_execution()
 
     # rotate by given amount if speed is valid
@@ -58,7 +58,7 @@ class SerialCommunicator:
             return False
 
         commandString = "rotate_in_place " + str(speed) + " " + str(degrees) + "\n"
-        self.Ser.write(commandString)
+        self.Ser.write(commandString.encode())
         return self.check_execution()
 
     # return min speed
@@ -72,4 +72,5 @@ class SerialCommunicator:
     # ends the serial communication session
     # Arduino needs to restart in order to restart session after this executes
     def end(self):
-        self.Ser.write("end")
+        self.Ser.write("end\n".encode())
+        self.Ser.close()
