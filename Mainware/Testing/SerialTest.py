@@ -12,4 +12,5 @@ time.sleep(2)
 
 # attempt a drive foward
 ser.write(b"drive_straight 800 100\n")
+time.sleep(10)
 ser.write(b"drive_straight 800 -100\n")
