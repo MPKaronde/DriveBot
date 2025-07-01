@@ -12,7 +12,7 @@ class CVModule:
 
     # setup camera, bounding box limits, line thickness
     def __init__(self):
-        self.cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+        self.cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
         if not self.cap.isOpened():
             print("Error: Could not open camera.")
         else:
