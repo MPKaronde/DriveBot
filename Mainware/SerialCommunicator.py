@@ -22,7 +22,7 @@ class SerialCommunicator:
         time.sleep(2)
 
         # get min and max limits
-        self.Ser.write(b"limits\n".encode())
+        self.Ser.write(b"limits\n")
         limString = self.Ser.readline().decode()
         print(limString)
         self.MIN_SPEED, self.MAX_SPEED = map(int, limString.split())
