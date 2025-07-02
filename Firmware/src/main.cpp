@@ -175,7 +175,6 @@ bool run_serial(String serial_command) {
     return drive_straight(speed, distance);
 
   } else if (main_command == "rotate_in_place") {
-    Serial.println("rotating");
     // cant be rotate in place
     if (space1 == -1) {
       return false;
@@ -190,7 +189,6 @@ bool run_serial(String serial_command) {
     int speed   = serial_command.substring(space1, space2).toInt();
     int degrees = serial_command.substring(space2).toInt();
 
-    Serial.println("space1: " + String(space1) + " Space2: " + String(space2) + "\nSpeed: " + String(speed) + " degs " + String(degrees));
     return rotate_in_place(speed, degrees);
   }
   // NOTE - Special case: accesses serial from outside serial_runner
