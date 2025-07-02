@@ -164,7 +164,7 @@ bool run_serial(String serial_command) {
       return false;
     }
 
-    int space2 = serial_command.indexOf(" ", space1);
+    int space2 = serial_command.indexOf(" ", space1 + 1);
     // cant be drive_straight
     if (space2 == -1) {
       return false;
@@ -175,19 +175,22 @@ bool run_serial(String serial_command) {
     return drive_straight(speed, distance);
 
   } else if (main_command == "rotate_in_place") {
+    Serial.println("rotating");
     // cant be rotate in place
     if (space1 == -1) {
       return false;
     }
 
-    int space2 = serial_command.indexOf(" ", space1);
+    int space2 = serial_command.indexOf(" ", space1 + 1);
     // cant be rotate in place
     if (space2 == -1) {
       return false;
     }
 
-    int speed   = main_command.substring(space1, space2).toInt();
-    int degrees = main_command.substring(space2).toInt();
+    int speed   = serial_command.substring(space1, space2).toInt();
+    int degrees = serial_command.substring(space2).toInt();
+
+    Serial.println("space1: " + String(space1) + " Space2: " + String(space2) + "\nSpeed: " + String(speed) + " degs " + String(degrees));
     return rotate_in_place(speed, degrees);
   }
   // NOTE - Special case: accesses serial from outside serial_runner
@@ -230,8 +233,8 @@ void serial_runner() {
   while (SERIAL_RUNNING) {
 
     // block while waiting for next command or bump switch
-    while (Serial.available() == 0 || !check_bumps()) {
-    }
+    // while (Serial.available() == 0 || !check_bumps()) {
+    // }
 
     // if bumped, respond to bumps
     if (check_bumps()) {
