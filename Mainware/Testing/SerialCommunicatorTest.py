@@ -16,7 +16,7 @@ sys.path.insert(0, project_root)
 # Now import
 from Mainware import SerialCommunicator
 
-Ser = serial.Serial(port_name="/dev/ttyUSB0", baud_rate=9600, timeout=1)
+Ser = serial.Serial("/dev/ttyUSB0", 9600, timeout=1)
 time.sleep(2)
 # check what serial limits returns
 Ser.write(b"limits\n")
