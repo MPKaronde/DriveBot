@@ -82,6 +82,8 @@ bool drive_straight(int speed, int distance) {
   // set desired speed and distance into motors
   Left.setMaxSpeed(speed);
   Right.setMaxSpeed(speed);
+  Left.setCurrentPosition(0);
+  Right.setCurrentPosition(0);
   Left.moveTo(distance);
   Right.moveTo(distance);
 
@@ -107,6 +109,8 @@ bool rotate_in_place(int speed, int degrees) {
   // set motor speed
   Left.setMaxSpeed(speed);
   Right.setMaxSpeed(speed);
+  Left.setCurrentPosition(0);
+  Right.setCurrentPosition(0);
 
   /*
   Calculate Ticks::
