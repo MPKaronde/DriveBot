@@ -6,12 +6,12 @@ Most importantly, is delay amount enough between command sends and does confirma
 import sys
 import os
 
-# Always resolve path relative to the script location
+# Go two levels up from Testing (to project root)
 current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.abspath(os.path.join(current_dir))  # project dir
-if parent_dir not in sys.path:
-    sys.path.insert(0, parent_dir)
+project_root = os.path.abspath(os.path.join(current_dir, "..", ".."))
+sys.path.insert(0, project_root)
 
+# Now import
 from Mainware import SerialCommunicator
 
 serCom = SerialCommunicator()
