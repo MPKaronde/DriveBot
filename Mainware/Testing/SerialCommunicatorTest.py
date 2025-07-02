@@ -20,7 +20,7 @@ Ser = serial.Serial("/dev/ttyUSB0", 9600, timeout=1)
 time.sleep(2)
 # check what serial limits returns
 Ser.write(b"limits\n")
-time.sleep(10)
+time.sleep(2)
 first = Ser.readline().decode()
 print(first + " one")
 limString = Ser.readline().decode()
