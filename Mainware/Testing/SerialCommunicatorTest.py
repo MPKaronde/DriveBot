@@ -3,7 +3,15 @@ Code to test serial communication module.
 Most importantly, is delay amount enough between command sends and does confirmation reading work
 """
 
-import SerialCommunicator
+import sys
+import os
+
+# Get the parent directory of the current file's directory
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, parent_dir)
+
+# Now you can import from parent_module
+from Mainware import SerialCommunicator
 
 serCom = SerialCommunicator()
 
