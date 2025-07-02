@@ -5,6 +5,7 @@ Most importantly, is delay amount enough between command sends and does confirma
 
 import sys
 import os
+import time
 
 # Go two levels up from Testing (to project root)
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -15,6 +16,13 @@ sys.path.insert(0, project_root)
 from Mainware import SerialCommunicator
 
 serCom = SerialCommunicator.SerialCommunicator()
+
+# check what serial limits returns
+serCom.Ser.write(b"limits\n")
+time.sleep(10)
+limString = serCom.Ser.readline().decode()
+print(limString + " hello")
+
 
 # make sure min and max speed works right
 print("minSpeed: " + str(serCom.min_speed()) + " maxSpeed: " + str(serCom.max_speed()))
