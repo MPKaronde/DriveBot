@@ -14,7 +14,7 @@ sys.path.insert(0, project_root)
 # Now import
 from Mainware import SerialCommunicator
 
-serCom = SerialCommunicator()
+serCom = SerialCommunicator.SerialCommunicator()
 
 # make sure min and max speed works right
 print("minSpeed: " + str(serCom.min_speed()) + " maxSpeed: " + str(serCom.max_speed()))
