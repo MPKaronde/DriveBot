@@ -21,6 +21,7 @@ time.sleep(2)
 # check what serial limits returns
 Ser.write(b"limits\n")
 time.sleep(10)
+Ser.readline()
 limString = Ser.readline().decode()
 print(limString + " hello")
 
