@@ -6,6 +6,7 @@ Most importantly, is delay amount enough between command sends and does confirma
 import sys
 import os
 import time
+import serial
 
 # Go two levels up from Testing (to project root)
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -15,13 +16,15 @@ sys.path.insert(0, project_root)
 # Now import
 from Mainware import SerialCommunicator
 
-serCom = SerialCommunicator.SerialCommunicator()
-
+Ser = serial.Serial(port_name="/dev/ttyUSB0", baud_rate=9600, timeout=1)
+time.sleep(2)
 # check what serial limits returns
-serCom.Ser.write(b"limits\n")
+Ser.write(b"limits\n")
 time.sleep(10)
-limString = serCom.Ser.readline().decode()
+limString = Ser.readline().decode()
 print(limString + " hello")
+
+serCom = SerialCommunicator.SerialCommunicator()
 
 
 # make sure min and max speed works right
