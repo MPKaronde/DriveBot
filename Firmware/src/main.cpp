@@ -235,22 +235,19 @@ void serial_runner() {
   while (SERIAL_RUNNING) {
 
     // block while waiting for next command or bump switch
-    // while (Serial.available() == 0 || !check_bumps()) {
-    // }
-
-    // if bumped, respond to bumps
-    if (check_bumps()) {
-      respond_to_bumps();
+    while (Serial.available() == 0) {
+      // idle (no command) behavior
+      if (check_bumps()) {
+        respond_to_bumps();
+      }
     }
 
-    // otherwise command recieved
-    else {
-      numCommands++;
-      String command         = Serial.readString();
-      bool   commandExecuted = run_serial(command);
-      String printBack       = "command no :: " + (String)numCommands + "       execution state :: " + (String)commandExecuted;
-      Serial.println(printBack);
-    }
+    // command recieved
+    numCommands++;
+    String command         = Serial.readString();
+    bool   commandExecuted = run_serial(command);
+    String printBack       = "command no :: " + (String)numCommands + "       execution state :: " + (String)commandExecuted;
+    Serial.println(printBack);
   }
   Serial.println("Session ended       # commands executed :: " + numCommands);
 }
