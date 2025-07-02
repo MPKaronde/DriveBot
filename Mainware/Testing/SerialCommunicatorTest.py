@@ -6,11 +6,12 @@ Most importantly, is delay amount enough between command sends and does confirma
 import sys
 import os
 
-# Get the parent directory of the current file's directory
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-sys.path.insert(0, parent_dir)
+# Always resolve path relative to the script location
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.abspath(os.path.join(current_dir))  # project dir
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
 
-# Now you can import from parent_module
 from Mainware import SerialCommunicator
 
 serCom = SerialCommunicator()
